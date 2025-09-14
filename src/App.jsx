@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { ThemeProvider } from '@mui/material/styles'
 import darkTheme from './theme'
 import api, { setAuthToken } from './api'
-import './i18n'
 import { useTranslation } from 'react-i18next'
 import i18n from './i18n'
 
@@ -23,6 +22,9 @@ import FarmerDashboard from './components/Dashboard/FarmerDashboard'
 
 // Loading Component
 import LoadingSpinner from './components/Common/LoadingSpinner'
+
+// Test Component
+import TailwindTest from './components/Test/TailwindTest'
 
 const App = () => {
   const [user, setUser] = useState(null)
@@ -75,6 +77,11 @@ const App = () => {
 
   if (loading) {
     return <LoadingSpinner />
+  }
+
+  // Temporarily show Tailwind test for debugging
+  if (window.location.search.includes('test=tailwind')) {
+    return <TailwindTest />
   }
 
   if (!user) {

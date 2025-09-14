@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { Routes, Route, useNavigate } from 'react-router-dom'
 import { 
   ChartBarIcon, 
   CameraIcon, 
@@ -9,20 +8,12 @@ import {
   ChatBubbleLeftRightIcon,
   ExclamationTriangleIcon,
   SunIcon,
-  CloudIcon,
-  ArrowRightIcon
+  CloudIcon
 } from '@heroicons/react/24/outline'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts'
 import api from '../../api'
 
-// Import Farmer Pages
-import ImageClassifier from '../Farmer/ImageClassifier'
-import FarmerNetwork from '../Farmer/FarmerNetwork'
-import ComplianceTracker from '../Farmer/ComplianceTracker'
-import TrainingModules from '../Farmer/TrainingModules'
-
 const FarmerDashboard = () => {
-  const navigate = useNavigate()
   const [farmHealth, setFarmHealth] = useState({
     overallStatus: 'Good',
     livestockCount: 0,
@@ -30,7 +21,6 @@ const FarmerDashboard = () => {
     complianceScore: 0
   })
   const [loading, setLoading] = useState(true)
-  const [currentView, setCurrentView] = useState('dashboard')
 
   useEffect(() => {
     fetchDashboardData()
@@ -83,19 +73,11 @@ const FarmerDashboard = () => {
   ]
 
   const quickActions = [
-    { title: 'Disease Classifier', icon: CameraIcon, color: 'red', action: 'image-classifier', description: 'AI-powered disease detection' },
-    { title: 'Farmer Network', icon: UserGroupIcon, color: 'blue', action: 'farmer-network', description: 'Connect with other farmers' },
-    { title: 'Compliance Tracker', icon: ClipboardDocumentListIcon, color: 'green', action: 'compliance-tracker', description: 'Manage documents & deadlines' },
-    { title: 'Training Modules', icon: AcademicCapIcon, color: 'purple', action: 'training-modules', description: 'Learn best practices' }
+    { title: 'Report Disease', icon: ExclamationTriangleIcon, color: 'red', action: 'report-disease' },
+    { title: 'Request Vet Visit', icon: UserGroupIcon, color: 'blue', action: 'request-vet' },
+    { title: 'Upload Documents', icon: ClipboardDocumentListIcon, color: 'green', action: 'upload-docs' },
+    { title: 'Access Training', icon: AcademicCapIcon, color: 'purple', action: 'training' }
   ]
-
-  const handleQuickAction = (action) => {
-    setCurrentView(action)
-  }
-
-  const handleBackToDashboard = () => {
-    setCurrentView('dashboard')
-  }
 
   if (loading) {
     return (
@@ -105,40 +87,20 @@ const FarmerDashboard = () => {
     )
   }
 
-  // Render different views based on currentView
-  if (currentView === 'image-classifier') {
-    return <ImageClassifier />
-  }
-  if (currentView === 'farmer-network') {
-    return <FarmerNetwork />
-  }
-  if (currentView === 'compliance-tracker') {
-    return <ComplianceTracker />
-  }
-  if (currentView === 'training-modules') {
-    return <TrainingModules />
-  }
-
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-white">Farm Dashboard</h1>
           <p className="text-gray-400">Welcome to your biosecurity management center</p>
         </div>
-        <div className="flex flex-wrap gap-3">
-          <button 
-            onClick={() => handleQuickAction('image-classifier')}
-            className="btn-farmer"
-          >
+        <div className="flex space-x-3">
+          <button className="btn-farmer">
             <CameraIcon className="w-5 h-5 mr-2" />
-            Disease Classifier
+            Image Classifier
           </button>
-          <button 
-            onClick={() => handleQuickAction('farmer-network')}
-            className="btn-secondary"
-          >
+          <button className="btn-secondary">
             <UserGroupIcon className="w-5 h-5 mr-2" />
             Farmer Network
           </button>
@@ -174,68 +136,52 @@ const FarmerDashboard = () => {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {quickActions.map((action, index) => (
           <button
             key={index}
-            onClick={() => handleQuickAction(action.action)}
-            className="card hover:bg-gray-700/50 hover:shadow-lg transition-all duration-200 text-left group cursor-pointer"
+            className="card hover:bg-gray-700/50 transition-colors duration-200 text-center"
           >
-            <div className="flex items-start space-x-4">
-              <div className={`p-3 rounded-lg bg-${action.color}-500/20 group-hover:bg-${action.color}-500/30 transition-colors duration-200`}>
-                <action.icon className={`w-6 h-6 text-${action.color}-500`} />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-semibold text-white group-hover:text-farmer-400 transition-colors duration-200">
-                  {action.title}
-                </h3>
-                <p className="text-sm text-gray-400 mt-1">{action.description}</p>
-                <div className="flex items-center mt-2 text-farmer-400 text-sm font-medium">
-                  <span>Open</span>
-                  <ArrowRightIcon className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform duration-200" />
-                </div>
-              </div>
-            </div>
+            <action.icon className={`w-8 h-8 mx-auto mb-2 text-${action.color}-500`} />
+            <div className="text-sm font-medium text-white">{action.title}</div>
           </button>
         ))}
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Health Trends Chart */}
-        <div className="card xl:col-span-2">
+        <div className="card lg:col-span-2">
           <h3 className="text-lg font-semibold text-white mb-4">Health & Production Trends</h3>
-          <div className="h-64 sm:h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={healthTrends}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                <XAxis dataKey="month" stroke="#9ca3af" />
-                <YAxis stroke="#9ca3af" />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#1f2937', 
-                    border: '1px solid #374151',
-                    borderRadius: '8px',
-                    color: '#fff'
-                  }} 
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="health" 
-                  stroke="#388e3c" 
-                  strokeWidth={2}
-                  name="Health Score"
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="production" 
-                  stroke="#26a69a" 
-                  strokeWidth={2}
-                  name="Production Score"
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={healthTrends}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+              <XAxis dataKey="month" stroke="#9ca3af" />
+              <YAxis stroke="#9ca3af" />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: '#1f2937', 
+                  border: '1px solid #374151',
+                  borderRadius: '8px',
+                  color: '#fff'
+                }} 
+              />
+              <Line 
+                type="monotone" 
+                dataKey="health" 
+                stroke="#388e3c" 
+                strokeWidth={2}
+                name="Health Score"
+              />
+              <Line 
+                type="monotone" 
+                dataKey="production" 
+                stroke="#26a69a" 
+                strokeWidth={2}
+                name="Production Score"
+              />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
 
         {/* Weather Alerts */}
@@ -243,7 +189,7 @@ const FarmerDashboard = () => {
           <h3 className="text-lg font-semibold text-white mb-4">Weather Alerts</h3>
           <div className="space-y-3">
             {weatherAlerts.map((alert) => (
-              <div key={alert.id} className="p-3 bg-gray-700/50 rounded-lg hover:bg-gray-700/70 transition-colors duration-200">
+              <div key={alert.id} className="p-3 bg-gray-700/50 rounded-lg">
                 <div className="flex items-start space-x-3">
                   <div className={`w-2 h-2 rounded-full mt-2 ${
                     alert.severity === 'high' ? 'bg-red-500' :
@@ -261,22 +207,13 @@ const FarmerDashboard = () => {
       </div>
 
       {/* Bottom Row */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Compliance Deadlines */}
         <div className="card">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-white">Compliance Deadlines</h3>
-            <button 
-              onClick={() => handleQuickAction('compliance-tracker')}
-              className="text-farmer-400 hover:text-farmer-300 text-sm font-medium flex items-center"
-            >
-              View All
-              <ArrowRightIcon className="w-4 h-4 ml-1" />
-            </button>
-          </div>
+          <h3 className="text-lg font-semibold text-white mb-4">Compliance Deadlines</h3>
           <div className="space-y-3">
             {complianceDeadlines.map((deadline) => (
-              <div key={deadline.id} className="p-3 bg-gray-700/50 rounded-lg hover:bg-gray-700/70 transition-colors duration-200">
+              <div key={deadline.id} className="p-3 bg-gray-700/50 rounded-lg">
                 <div className="flex items-center justify-between mb-2">
                   <h4 className="text-sm font-medium text-white">{deadline.document}</h4>
                   <span className={`text-xs px-2 py-1 rounded-full ${
@@ -300,7 +237,7 @@ const FarmerDashboard = () => {
           <h3 className="text-lg font-semibold text-white mb-4">Recent Notifications</h3>
           <div className="space-y-3">
             {recentNotifications.map((notification) => (
-              <div key={notification.id} className={`p-3 rounded-lg hover:bg-gray-700/70 transition-colors duration-200 ${
+              <div key={notification.id} className={`p-3 rounded-lg ${
                 notification.read ? 'bg-gray-700/30' : 'bg-gray-700/50'
               }`}>
                 <div className="flex items-start space-x-3">
