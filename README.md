@@ -42,27 +42,21 @@ A comprehensive SaaS web application for biosecurity management in the livestock
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd p3-biosecurity-saas
-   ```
+   
+   
 
 2. **Install dependencies**
    ```bash
    npm install
    ```
 
-3. **Configure environment variables**
-   Create a `.env` file in the root directory:
-   ```env
-   VITE_API_BASE_URL=http://localhost:8000/api
-   VITE_APP_NAME=P3 Biosecurity Platform
-   ```
 
-4. **Start the development server**
+3. **Start the development server**
    ```bash
    npm run dev
    ```
 
-5. **Open your browser**
+4. **Open your browser**
    Navigate to `http://localhost:3000`
 
 ## 🏗️ Project Structure
